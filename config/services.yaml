@@ -1,0 +1,244 @@
+
+
+services:
+  tug_seo.registry.field:
+    class: Tug\SeoBundle\Registry\Field
+    public: true
+
+  tug_seo.registry.renderer:
+    class: Tug\SeoBundle\Registry\Renderer
+    public: true
+
+  tug_seo.registry.context:
+    class: Tug\SeoBundle\Registry\Context
+    public: true
+
+  tug_seo.translator:
+    class: Tug\SeoBundle\Translate\Translator
+    arguments: [ '@translator' ]
+    public: true
+
+  tug_seo.twig.route_name_provider:
+    class: Tug\SeoBundle\Twig\RouteNameProvider
+    arguments: [ '@request_stack' ]
+    public: true
+
+  Tug\SeoBundle\Registry\FieldInterface: '@tug_seo.registry.field'
+
+  Tug\SeoBundle\Registry\RendererInterface: '@tug_seo.registry.renderer'
+
+  Tug\SeoBundle\Registry\ContextInterface: '@tug_seo.registry.context'
+
+  Tug\SeoBundle\Translate\TranslatorInterface: '@tug_seo.translator'
+
+  Tug\SeoBundle\Twig\RouteNameProviderInterface: '@tug_seo.twig.route_name_provider'
+
+  # twig
+
+  Tug\SeoBundle\Twig\TugSeoExtension:
+    arguments:
+      $field: '@Tug\SeoBundle\Registry\FieldInterface'
+      $context: '@Tug\SeoBundle\Registry\ContextInterface'
+      $renderer: '@Tug\SeoBundle\Registry\RendererInterface'
+      $routeNameProvider: '@Tug\SeoBundle\Twig\RouteNameProviderInterface'
+    tags: ['twig.extension']
+
+  # ~ twig
+
+  # tag renderers
+
+  Tug\SeoBundle\Renderer\Meta:
+    tags: [ 'tug_seo.renderer' ]
+
+  Tug\SeoBundle\Renderer\Title:
+    tags: [ 'tug_seo.renderer' ]
+
+  Tug\SeoBundle\Renderer\Link:
+    tags: [ 'tug_seo.renderer' ]
+
+  # ~ tag renderers
+
+  # basic seo fields
+
+  Tug\SeoBundle\Field\Basic\Title:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\Basic\Description:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\Basic\Keywords:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\Basic\Robots:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Basic\Canonical:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Basic\AmpHtml:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ basic seo fields
+
+  # open graph fields
+
+  Tug\SeoBundle\Field\OpenGraph\Audio:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Description:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Determiner:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Image:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Locale:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\SiteName:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Title:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Type:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Url:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\OpenGraph\Video:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph fields
+
+  # open graph article fields
+
+  Tug\SeoBundle\Field\Article\Author:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Article\ExpirationTime:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Article\ModifiedTime:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Article\PublishedTime:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Article\Section:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\Article\Tag:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph article fields
+
+  # open graph book fields
+
+  Tug\SeoBundle\Field\Book\Author:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Book\Isbn:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Book\ReleaseDate:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Book\Tag:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph book fields
+
+  # open graph music fields
+
+  Tug\SeoBundle\Field\Music\Album:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Music\Creator:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Music\Duration:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Music\Musician:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Music\ReleaseDate:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Music\Song:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph music fields
+
+  # open graph profile fields
+
+  Tug\SeoBundle\Field\Profile\FirstName:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Profile\LastName:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Profile\Gender:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Profile\Username:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph profile fields
+
+  # open graph video fields
+
+  Tug\SeoBundle\Field\Video\Actor:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\Director:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\Duration:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\ReleaseDate:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\Series:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\Tag:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Video\Writer:
+    tags: [ 'tug_seo.field' ]
+
+  # ~ open graph video fields
+
+  # twitter open graph fields
+
+  Tug\SeoBundle\Field\Twitter\App:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Card:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Creator:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Description:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  Tug\SeoBundle\Field\Twitter\Image:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Player:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Site:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Twitter\Title:
+    tags: [ 'tug_seo.field', 'tug_seo.field.translatable' ]
+
+  # ~ twitter open graph fields
