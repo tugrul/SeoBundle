@@ -29,4 +29,6 @@ interface ContextInterface
     public function setHierarchy(array $hierarchy);
 
     public function getFieldData(string $routeName, array $namespace): ?FieldData;
+
+    public function getParentRouteName(string $routeName): ?string;
 }

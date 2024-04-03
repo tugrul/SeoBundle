@@ -33,7 +33,8 @@ class TugSeoExtensionTest extends TestCase
 
         $loader = new ArrayLoader([
             'index' => '<!-- start -->{{ tug_seo(null) }}<!-- end -->',
-            'index_well_formed' => '<!-- start -->{{ tug_seo(2) }}<!-- end -->'
+            'index_well_formed' => '<!-- start -->{{ tug_seo(2) }}<!-- end -->',
+            'menu_page' => '<a href="#"{% if tug_seo_is_route_active(routeName) %} class="active"{% endif %}>Page</a>'
         ]);
 
         $this->field = new FieldRegistry();
@@ -111,5 +112,56 @@ class TugSeoExtensionTest extends TestCase
         $this->assertEquals('<!-- start --><meta name="test1" content="zuzu # param1=pval1" />' .
             '<meta property="test2" content="a # option1=oval1" /><!-- end -->',
             $this->twig->render('index'));
+    }
+
+    public function testIsRouteActive(): void
+    {
+        $this->context->setHierarchy([
+            'contact' => 'index',
+            'post-index' => 'index',
+            'post-detail' => 'post-index',
+            'archive' => 'index',
+            'archive-year' => 'archive',
+            'archive-year-month' => 'archive-year'
+        ]);
+
+        $this->routeNameProvider->setCurrentRouteName('post-detail');
+
+        $this->assertEquals('<a href="#">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'non-exists']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'post-detail']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'post-index']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'index']));
+
+        $this->routeNameProvider->setCurrentRouteName('archive-year-month');
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'archive-year-month']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'archive-year']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'archive']));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'index']));
+
+        $this->routeNameProvider->setCurrentRouteName('non-exists');
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'non-exists']));
+
+        $this->assertEquals('<a href="#">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'index']));
+
+        $this->assertEquals('<a href="#">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'other-non-exists']));
     }
 }

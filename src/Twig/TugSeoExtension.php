@@ -31,7 +31,8 @@ class TugSeoExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('tug_seo', [$this, 'getRenderedFields'], ['is_safe' => ['html']])
+            new TwigFunction('tug_seo', [$this, 'getRenderedFields'], ['is_safe' => ['html']]),
+            new TwigFunction('tug_seo_is_route_active', [$this, 'isRouteActive'])
         ];
     }
 
@@ -64,5 +65,21 @@ class TugSeoExtension extends AbstractExtension
         $separator = is_null($tabSize) ? '' : PHP_EOL. str_repeat(' ', $tabSize);
 
         return implode($separator, $result);
+    }
+
+    public function isRouteActive(string $routeName): bool
+    {
+        $currentRouteName = $this->routeNameProvider->getCurrentRouteName();
+
+        do {
+            if ($currentRouteName === $routeName) {
+                return true;
+            }
+
+            $currentRouteName = $this->context->getParentRouteName($currentRouteName);
+
+        } while (!is_null($currentRouteName));
+
+        return false;
     }
 }
