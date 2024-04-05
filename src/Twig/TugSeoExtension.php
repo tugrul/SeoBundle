@@ -67,18 +67,25 @@ class TugSeoExtension extends AbstractExtension
         return implode($separator, $result);
     }
 
-    public function isRouteActive(string $routeName): bool
+    public function isRouteActive(string $routeName, bool $skipRoot = true): bool
     {
         $currentRouteName = $this->routeNameProvider->getCurrentRouteName();
 
-        do {
+        if ($currentRouteName === $routeName) {
+            return true;
+        }
+
+        while ($parentRouteName = $this->context->getParentRouteName($currentRouteName)) {
             if ($currentRouteName === $routeName) {
-                return true;
+                break;
             }
 
-            $currentRouteName = $this->context->getParentRouteName($currentRouteName);
+            $currentRouteName = $parentRouteName;
+        }
 
-        } while (!is_null($currentRouteName));
+        if ($currentRouteName === $routeName && (!$skipRoot || !is_null($parentRouteName))) {
+            return true;
+        }
 
         return false;
     }

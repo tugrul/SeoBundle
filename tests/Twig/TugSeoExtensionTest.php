@@ -34,7 +34,8 @@ class TugSeoExtensionTest extends TestCase
         $loader = new ArrayLoader([
             'index' => '<!-- start -->{{ tug_seo(null) }}<!-- end -->',
             'index_well_formed' => '<!-- start -->{{ tug_seo(2) }}<!-- end -->',
-            'menu_page' => '<a href="#"{% if tug_seo_is_route_active(routeName) %} class="active"{% endif %}>Page</a>'
+            'menu_page' => '<a href="#"{% if tug_seo_is_route_active(routeName, skipRoot) %} ' .
+                'class="active"{% endif %}>Page</a>'
         ]);
 
         $this->field = new FieldRegistry();
@@ -128,40 +129,49 @@ class TugSeoExtensionTest extends TestCase
         $this->routeNameProvider->setCurrentRouteName('post-detail');
 
         $this->assertEquals('<a href="#">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'non-exists']));
+            $this->twig->render('menu_page', ['routeName' => 'non-exists', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'post-detail']));
+            $this->twig->render('menu_page', ['routeName' => 'post-detail', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'post-index']));
+            $this->twig->render('menu_page', ['routeName' => 'post-index', 'skipRoot' => true]));
+
+        $this->assertEquals('<a href="#">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'index', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'index']));
+            $this->twig->render('menu_page', ['routeName' => 'index', 'skipRoot' => false]));
 
         $this->routeNameProvider->setCurrentRouteName('archive-year-month');
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'archive-year-month']));
+            $this->twig->render('menu_page', ['routeName' => 'archive-year-month', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'archive-year']));
+            $this->twig->render('menu_page', ['routeName' => 'archive-year', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'archive']));
+            $this->twig->render('menu_page', ['routeName' => 'archive', 'skipRoot' => true]));
+
+        $this->assertEquals('<a href="#">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'index', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'index']));
+            $this->twig->render('menu_page', ['routeName' => 'index', 'skipRoot' => false]));
 
         $this->routeNameProvider->setCurrentRouteName('non-exists');
 
         $this->assertEquals('<a href="#" class="active">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'non-exists']));
+            $this->twig->render('menu_page', ['routeName' => 'non-exists', 'skipRoot' => true]));
+
+        $this->assertEquals('<a href="#" class="active">Page</a>',
+            $this->twig->render('menu_page', ['routeName' => 'non-exists', 'skipRoot' => false]));
 
         $this->assertEquals('<a href="#">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'index']));
+            $this->twig->render('menu_page', ['routeName' => 'index', 'skipRoot' => true]));
 
         $this->assertEquals('<a href="#">Page</a>',
-            $this->twig->render('menu_page', ['routeName' => 'other-non-exists']));
+            $this->twig->render('menu_page', ['routeName' => 'other-non-exists', 'skipRoot' => true]));
     }
 }
