@@ -18,8 +18,8 @@ services:
     arguments: [ '@translator' ]
     public: true
 
-  tug_seo.twig.route_name_provider:
-    class: Tug\SeoBundle\Twig\RouteNameProvider
+  tug_seo.provider.route_name_provider:
+    class: Tug\SeoBundle\Provider\RouteNameProvider
     arguments: [ '@request_stack' ]
     public: true
 
@@ -31,7 +31,7 @@ services:
 
   Tug\SeoBundle\Translate\TranslatorInterface: '@tug_seo.translator'
 
-  Tug\SeoBundle\Twig\RouteNameProviderInterface: '@tug_seo.twig.route_name_provider'
+  Tug\SeoBundle\Provider\RouteNameProviderInterface: '@tug_seo.provider.route_name_provider'
 
   # twig
 
@@ -40,7 +40,7 @@ services:
       $field: '@Tug\SeoBundle\Registry\FieldInterface'
       $context: '@Tug\SeoBundle\Registry\ContextInterface'
       $renderer: '@Tug\SeoBundle\Registry\RendererInterface'
-      $routeNameProvider: '@Tug\SeoBundle\Twig\RouteNameProviderInterface'
+      $routeNameProvider: '@Tug\SeoBundle\Provider\RouteNameProviderInterface'
     tags: ['twig.extension']
 
   # ~ twig

@@ -6,6 +6,8 @@ use Tug\SeoBundle\Registry\{ContextInterface, FieldInterface, RendererInterface}
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+use Tug\SeoBundle\Provider\RouteNameProviderInterface;
+
 class TugSeoExtension extends AbstractExtension
 {
     protected FieldInterface $field;

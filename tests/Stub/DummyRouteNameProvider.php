@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Tests\Stub;
 
-use Tug\SeoBundle\Twig\RouteNameProviderInterface;
+use Tug\SeoBundle\Provider\RouteNameProviderInterface;
 
 class DummyRouteNameProvider implements RouteNameProviderInterface
 {

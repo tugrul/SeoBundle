@@ -1,6 +1,6 @@
 <?php
 
-namespace Tug\SeoBundle\Twig;
+namespace Tug\SeoBundle\Provider;
 
 interface RouteNameProviderInterface
 {
