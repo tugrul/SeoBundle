@@ -3,8 +3,8 @@
 namespace Tug\SeoBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Tug\SeoBundle\Model\{Title as TitleModel, Link as LinkModel, Meta as MetaModel};
-use Tug\SeoBundle\Renderer\{Link, Meta, Title};
+use Tug\SeoBundle\Model\{Title as TitleModel, Link as LinkModel, Meta as MetaModel, Script as ScriptModel};
+use Tug\SeoBundle\Renderer\{Link, Meta, Script, Title};
 use Tug\SeoBundle\Tests\Stub\DummyRenderer;
 
 class RendererTest extends TestCase
@@ -94,5 +94,37 @@ class RendererTest extends TestCase
         $model->setValue('white lion');
 
         $this->assertEquals('<title>white lion</title>', $renderer->render($model));
+    }
+
+    public function testScript(): void
+    {
+        $renderer = new Script();
+
+        $model = new ScriptModel();
+
+        $this->assertInstanceOf($renderer->getModel(), $model);
+
+        $this->assertEquals('<script></script>', $renderer->render($model));
+
+        $model->setType('text/javascript');
+
+        $this->assertEquals('<script type="text/javascript"></script>', $renderer->render($model));
+
+        $model->setNonce('abc123');
+
+        $this->assertEquals('<script type="text/javascript" nonce="abc123"></script>',
+            $renderer->render($model));
+
+        $model->setSource('test.js');
+
+        $this->assertEquals('<script type="text/javascript" src="test.js" nonce="abc123"></script>',
+            $renderer->render($model));
+
+        $model = new ScriptModel();
+        $model->setType('application/ld+json');
+        $model->setBody('[2,3,4]');
+
+        $this->assertEquals('<script type="application/ld+json">[2,3,4]</script>',
+            $renderer->render($model));
     }
 }

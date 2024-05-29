@@ -5,8 +5,11 @@ namespace Tug\SeoBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use Tug\SeoBundle\DependencyInjection\Compiler\{FieldRegistryPass, RendererRegistryPass, TranslatableFieldPass};
-use Tug\SeoBundle\Field\{FieldInterface, TranslatableFieldInterface};
+use Tug\SeoBundle\DependencyInjection\Compiler\{FieldRegistryPass,
+    RendererRegistryPass,
+    SerializableFieldPass,
+    TranslatableFieldPass};
+use Tug\SeoBundle\Field\{FieldInterface, TranslatableFieldInterface, SerializableFieldInterface};
 use Tug\SeoBundle\Renderer\RendererInterface;
 
 class TugSeoBundle extends Bundle
@@ -26,11 +29,16 @@ class TugSeoBundle extends Bundle
         $container->registerForAutoconfiguration(TranslatableFieldInterface::class)
             ->addTag('tug_seo.field.translatable');
 
+        $container->registerForAutoconfiguration(SerializableFieldInterface::class)
+            ->addTag('tug_seo.field.serializable');
+
         $container->addCompilerPass(new RendererRegistryPass());
 
         $container->addCompilerPass(new FieldRegistryPass());
 
         $container->addCompilerPass(new TranslatableFieldPass());
+
+        $container->addCompilerPass(new SerializableFieldPass());
     }
 
 

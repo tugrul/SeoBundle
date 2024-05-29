@@ -14,6 +14,7 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
+                ->append($this->getJsonLdDefinition())
                 ->append($this->getTranslationDefinition())
                 ->append($this->getOptionsDefinition())
                 ->append($this->getParametersDefinition())
@@ -28,6 +29,37 @@ class Configuration implements ConfigurationInterface
         ->end();
 
         return $treeBuilder;
+    }
+
+    public function getJsonLdDefinition(): ArrayNodeDefinition
+    {
+        $treeBuilder = new ArrayNodeDefinition('jsonLd');
+
+        return $treeBuilder->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('context')
+                    ->defaultNull()
+                ->end()
+                ->arrayNode('types')
+                    ->defaultValue([])
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('context')
+                                ->defaultNull()
+                            ->end()
+                            ->scalarNode('name')->end()
+                            ->arrayNode('parents')
+                                ->defaultValue([])
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('fields')
+                                ->defaultValue([])
+                                ->scalarPrototype()->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     public function getTranslationDefinition(): ArrayNodeDefinition

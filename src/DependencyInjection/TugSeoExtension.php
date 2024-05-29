@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Tug\SeoBundle\Registry\ContextInterface;
+use Tug\SeoBundle\Registry\JsonLdInterface;
 use Tug\SeoBundle\Translate\TranslatorInterface;
 use Exception;
 
@@ -53,6 +54,15 @@ class TugSeoExtension extends Extension
             $translator->addMethodCall('setFormatTemplate', [ $translation['format_template'] ]);
         }
 
+        if ($container->has(JsonLdInterface::class)) {
+            $jsonLd = $container->findDefinition(JsonLdInterface::class);
+
+            $jsonLdConfig = $config['jsonLd'];
+
+            $jsonLd->addMethodCall('setDefaultContext', [ $jsonLdConfig['context'] ]);
+
+            $jsonLd->addMethodCall('setTypes', [ $jsonLdConfig['types'] ]);
+        }
     }
 
     protected function normalizeRouteHierarchy(array $hierarchy): array

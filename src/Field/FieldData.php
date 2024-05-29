@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Field;
 
 class FieldData
 {
-    protected string|array $content;
+    protected mixed $content;
 
     protected array $parameters = [];
 
@@ -13,18 +13,18 @@ class FieldData
     protected ?FieldData $parent = null;
 
     /**
-     * @return array|string
+     * @return mixed
      */
-    public function getContent(): array|string
+    public function getContent(): mixed
     {
         return $this->content;
     }
 
     /**
-     * @param array|string $content
+     * @param mixed $content
      * @return FieldData
      */
-    public function setContent(array|string $content): FieldData
+    public function setContent(mixed $content): static
     {
         $this->content = $content;
         return $this;
@@ -42,7 +42,7 @@ class FieldData
      * @param array $parameters
      * @return FieldData
      */
-    public function setParameters(array $parameters): FieldData
+    public function setParameters(array $parameters): static
     {
         $this->parameters = $parameters;
         return $this;
@@ -61,7 +61,7 @@ class FieldData
      * @param bool $merge
      * @return FieldData
      */
-    public function setOptions(array $options, bool $merge = true): FieldData
+    public function setOptions(array $options, bool $merge = true): static
     {
         $this->options = $merge ? array_replace($this->options, $options) : $options;
 
@@ -71,7 +71,7 @@ class FieldData
     /**
      * @return FieldData|null
      */
-    public function getParent(): ?FieldData
+    public function getParent(): ?static
     {
         return $this->parent;
     }
@@ -80,9 +80,10 @@ class FieldData
      * @param FieldData|null $parent
      * @return FieldData
      */
-    public function setParent(?FieldData $parent): FieldData
+    public function setParent(?FieldData $parent): static
     {
         $this->parent = $parent;
+
         return $this;
     }
 }
