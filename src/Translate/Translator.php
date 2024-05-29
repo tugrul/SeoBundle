@@ -43,6 +43,8 @@ class Translator implements TranslatorInterface
 
     public function translate(string $content, array $parameters = []): string
     {
+        $parameters = array_filter($parameters, fn($value) => is_scalar($value));
+
         if ($this->type === TranslationType::Icu) {
             return $this->translator->trans($content, $parameters, $this->domain);
         }
