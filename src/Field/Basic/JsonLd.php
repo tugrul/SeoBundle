@@ -34,7 +34,16 @@ class JsonLd implements FieldInterface, SerializableFieldInterface
 
         $script->setType($options['mimeType'] ?? 'application/ld+json');
 
-        $script->setBody($this->serializer->serialize($fieldData->getContent(), 'ld+json',
+        $content = $fieldData->getContent();
+
+        if (isset($options['graph']) && is_string($options['graph'])) {
+            $content = [
+                '@context' => $options['graph'],
+                '@graph' => $content
+            ];
+        }
+
+        $script->setBody($this->serializer->serialize($content, 'ld+json',
             ['jsonLd' => ['defaultContext' => $defaultContext, 'parameters' => $fieldData->getParameters()]]));
 
         yield $script;

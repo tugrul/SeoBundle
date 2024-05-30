@@ -137,12 +137,12 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
     protected function matchField(string $value, array $parameters): ?array
     {
         if (preg_match(self::REPLACE_REGEX, $value, $matches) > 0
-            && isset($parameters[$matches[1]])) {
+            && array_key_exists($matches[1], $parameters)) {
             return [false, $parameters[$matches[1]]];
         }
 
         if (preg_match(self::EXPAND_REGEX, $value, $matches) > 0
-            && isset($parameters[$matches[1]])) {
+            && array_key_exists($matches[1], $parameters)) {
             return [true, $parameters[$matches[1]]];
         }
 
