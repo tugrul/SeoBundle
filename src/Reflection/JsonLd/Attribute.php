@@ -314,18 +314,15 @@ class Attribute
                 continue;
             }
 
+            if (isset($getters[$property->name])) {
+                $getter = $getters[$property->name];
+
+                $items[$fieldName] = new Field($getter->invoke($object), $item->property->types);
+            }
+
             if ($property->isPublic()) {
                 $items[$fieldName] = new Field($property->getValue($object), $item->property->types);
-                continue;
             }
-
-            if (!isset($getters[$property->name])) {
-                continue;
-            }
-
-            $getter = $getters[$property->name];
-
-            $items[$fieldName] = new Field($getter->invoke($object), $item->property->types);
         }
 
         return $items;
