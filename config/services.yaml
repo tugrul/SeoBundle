@@ -39,12 +39,30 @@ services:
 
   Tug\SeoBundle\Provider\RouteNameProviderInterface: '@tug_seo.provider.route_name_provider'
 
+  # jsonld filters
+
+  Tug\SeoBundle\JsonLd\Filter\Basic\PassParams:
+    tags: ['tug_seo.jsonld.filter']
+
+  Tug\SeoBundle\JsonLd\Filter\Basic\StringValue:
+    tags: ['tug_seo.jsonld.filter']
+
+  Tug\SeoBundle\JsonLd\Filter\Basic\UrlGenerator:
+    arguments:
+      $urlGenerator: '@Symfony\Component\Routing\Generator\UrlGeneratorInterface'
+    tags: ['tug_seo.jsonld.filter']
+
+  # ~ jsonld filters
+
   # serializer
 
   Tug\SeoBundle\Serializer\Encoder\JsonLdEncoder:
     tags: ['serializer.encoder']
 
   Tug\SeoBundle\Serializer\Normalizer\JsonLdObjectNormalizer:
+    arguments:
+      $jsonLdRegistry: '@Tug\SeoBundle\Registry\JsonLdInterface'
+      $propertyAccessor: '@Symfony\Component\PropertyAccess\PropertyAccessorInterface'
     tags: ['serializer.normalizer']
 
   Tug\SeoBundle\Serializer\Normalizer\JsonLdArrayNormalizer:

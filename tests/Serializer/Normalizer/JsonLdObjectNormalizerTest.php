@@ -3,8 +3,10 @@
 namespace Tug\SeoBundle\Tests\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
+
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface as TranslatorServiceInterface;
+use Tug\SeoBundle\JsonLd\Filter\FilterData;
 use Tug\SeoBundle\Schema\Enumeration\ItemListOrderType;
 
 use Tug\SeoBundle\Schema\Type\BreadcrumbList;
@@ -14,6 +16,8 @@ use Tug\SeoBundle\Serializer\Normalizer\{JsonLdArrayNormalizer,  JsonLdObjectNor
 
 use Tug\SeoBundle\Tests\Stub\JsonLd\DummyMixedContextModel;
 use Tug\SeoBundle\Tests\Stub\JsonLd\DummyModelLevel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\DummyFilterModel;
+
 use Tug\SeoBundle\Translate\TranslationType;
 use Tug\SeoBundle\Translate\Translator;
 use Tug\SeoBundle\Translate\TranslatorInterface;
@@ -51,9 +55,14 @@ class JsonLdObjectNormalizerTest extends TestCase
             'fields' => ['mixedField' => ['abc']]]
         ]);
 
+        $jsonLdRegistry->setFilter('test', fn() => null);
+        $jsonLdRegistry->setFilter('pick_params', fn(FilterData $data) => $data->params);
+        $jsonLdRegistry->setFilter('pick_value', fn(FilterData $data) => $data->params['value'] ?? null);
+        $jsonLdRegistry->setFilter('array_flip', fn(FilterData $data) => array_flip($data->value));
+
         $this->serializer = new Serializer([
             new JsonLdArrayNormalizer($this->getTranslator(), $jsonLdRegistry),
-            new JsonLdObjectNormalizer()
+            new JsonLdObjectNormalizer($jsonLdRegistry)
         ]);
     }
 
@@ -313,5 +322,17 @@ class JsonLdObjectNormalizerTest extends TestCase
             $this->serializer->normalize($field, 'ld+json', ['jsonLd' => [
                 'level' => 5
             ]]));
+    }
+
+    public function testGenericProperties(): void
+    {
+        $model = new DummyFilterModel();
+
+        $this->assertEquals([
+            '@type' => 'Zoka',
+            'myField2' => ['n1' => 'value1', 'n2' => 'value2'],
+            'mokoko' => 'abc',
+            'chain' => ['abc' => 'f1', 365 => 'f2']
+        ], $this->serializer->normalize($model, 'ld+json'));
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Schema\Type;
 
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('Thing', 'https://schema.org')]
 class Thing

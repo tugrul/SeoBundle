@@ -2,6 +2,8 @@
 
 namespace Tug\SeoBundle\Registry;
 
+use Tug\SeoBundle\JsonLd\Filter\FilterData;
+
 class JsonLd implements JsonLdInterface
 {
     const DEFAULT_CONTEXT_PLACEHOLDER = '#default#';
@@ -9,6 +11,8 @@ class JsonLd implements JsonLdInterface
     protected ?string $defaultContext = null;
 
     protected array $registry = [];
+
+    protected array $filters = [];
 
     public function setTypes(array $types): static
     {
@@ -75,5 +79,21 @@ class JsonLd implements JsonLdInterface
         return [];
     }
 
+    public function setFilter(string $handle, callable $filter): static
+    {
+        $this->filters[$handle] = $filter;
 
+        return $this;
+    }
+
+    public function applyFilter(string $handle, FilterData $data): mixed
+    {
+        if (!isset($this->filters[$handle])) {
+            $message = sprintf('Filter %s is not defined in registry', $handle);
+            throw new \RuntimeException($message);
+        }
+
+        return $this->filters[$handle]($data);
+    }
 }
+

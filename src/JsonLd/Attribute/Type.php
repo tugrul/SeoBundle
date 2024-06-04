@@ -1,6 +1,6 @@
 <?php
 
-namespace Tug\SeoBundle\Attribute\JsonLd;
+namespace Tug\SeoBundle\JsonLd\Attribute;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 class Type

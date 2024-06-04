@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Schema\Type;
 
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 use Tug\SeoBundle\Schema\Enumeration\ItemListOrderType;
 
 #[JsonLd\Type('ItemList', 'https://schema.org')]

@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Schema\Type;
 
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('ListItem', 'https://schema.org')]
 class ListItem extends Thing

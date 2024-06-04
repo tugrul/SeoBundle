@@ -1,13 +1,13 @@
 <?php
 
-namespace Tug\SeoBundle\Reflection\JsonLd;
+namespace Tug\SeoBundle\JsonLd\Reflection;
 
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 use Tug\SeoBundle\Exception\{JsonLdTypeException, JsonLdAttributeException};
 
 class Attribute
@@ -155,10 +155,6 @@ class Attribute
      */
     public function filterAttributesByType(JsonLd\Type $type, array $attributes, bool $includeOrphan = true): array
     {
-        /**
-         * @var $instance JsonLd\Property
-         */
-
         $result = [];
 
         foreach ($attributes as $attribute) {
@@ -296,7 +292,7 @@ class Attribute
             $result = $method->invoke($object);
 
             $items[$fieldName] = new Field($method->isGenerator() ? [...$result] : $result,
-                $item->property->types);
+                $item->property);
         }
 
         /**
@@ -317,15 +313,33 @@ class Attribute
             if (isset($getters[$property->name])) {
                 $getter = $getters[$property->name];
 
-                $items[$fieldName] = new Field($getter->invoke($object), $item->property->types);
+                $items[$fieldName] = new Field($getter->invoke($object), $item->property);
             }
 
             if ($property->isPublic()) {
-                $items[$fieldName] = new Field($property->getValue($object), $item->property->types);
+                $items[$fieldName] = new Field($property->getValue($object), $item->property);
             }
         }
 
         return $items;
+    }
+
+    /**
+     * @param JsonLd\Type $type
+     * @param int $level
+     * @param bool $includeOrphan
+     * @return JsonLd\Property[]
+     */
+    public function getGenericProperties(JsonLd\Type $type, int $level = 0, bool $includeOrphan = true): array
+    {
+        $attributes = $this->reflector->getAttributes(JsonLd\Property::class);
+
+        $fields =  $this->filterAttributesByType($type, $attributes, $includeOrphan);
+
+        $result = array_filter($fields, fn($field) =>
+            !$this->isLevelSkipable($field->level, $level) && !empty($field->filters));
+
+        return array_values($result);
     }
 
     protected function isLevelSkipable(int|array|null $targetLevel, int $currentLevel): bool

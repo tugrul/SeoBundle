@@ -3,7 +3,7 @@
 namespace Tug\SeoBundle\Serializer\Normalizer;
 
 use Symfony\Component\Serializer\Normalizer\{NormalizerAwareInterface, NormalizerAwareTrait, NormalizerInterface};
-use Tug\SeoBundle\Registry\JsonLdInterface;
+use Tug\SeoBundle\Registry\JsonLdInterface as JsonLdRegistryInterface;
 use Tug\SeoBundle\Translate\TranslatorInterface;
 
 
@@ -16,9 +16,9 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
 
     protected TranslatorInterface $translator;
 
-    protected JsonLdInterface $jsonLdRegistry;
+    protected JsonLdRegistryInterface $jsonLdRegistry;
 
-    public function __construct(TranslatorInterface $translator, JsonLdInterface $jsonLdRegistry)
+    public function __construct(TranslatorInterface $translator, JsonLdRegistryInterface $jsonLdRegistry)
     {
         $this->translator = $translator;
 

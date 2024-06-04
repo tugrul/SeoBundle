@@ -6,10 +6,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Tug\SeoBundle\DependencyInjection\Compiler\{FieldRegistryPass,
+    JsonLdRegistryPass,
     RendererRegistryPass,
     SerializableFieldPass,
     TranslatableFieldPass};
 use Tug\SeoBundle\Field\{FieldInterface, TranslatableFieldInterface, SerializableFieldInterface};
+use Tug\SeoBundle\JsonLd\Filter\FilterInterface;
 use Tug\SeoBundle\Renderer\RendererInterface;
 
 class TugSeoBundle extends Bundle
@@ -32,6 +34,9 @@ class TugSeoBundle extends Bundle
         $container->registerForAutoconfiguration(SerializableFieldInterface::class)
             ->addTag('tug_seo.field.serializable');
 
+        $container->registerForAutoconfiguration(FilterInterface::class)
+            ->addTag('tug_seo.jsonld.filter');
+
         $container->addCompilerPass(new RendererRegistryPass());
 
         $container->addCompilerPass(new FieldRegistryPass());
@@ -39,6 +44,8 @@ class TugSeoBundle extends Bundle
         $container->addCompilerPass(new TranslatableFieldPass());
 
         $container->addCompilerPass(new SerializableFieldPass());
+
+        $container->addCompilerPass(new JsonLdRegistryPass());
     }
 
 

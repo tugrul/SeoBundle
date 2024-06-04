@@ -2,9 +2,14 @@
 
 namespace Tug\SeoBundle\Tests\Stub\JsonLd;
 
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('LevelModel')]
+#[JsonLd\Property('gen1', filters: 'test')]
+#[JsonLd\Property('gen2', level: 1, filters: 'test')]
+#[JsonLd\Property('gen3', level: 2, filters: 'test')]
+#[JsonLd\Property('gen4', level: [2], filters: 'test')]
+#[JsonLd\Property('gen5', level: [3, 4], filters: 'test')]
 class DummyModelLevel
 {
     #[JsonLd\Property('aaa', level: 1)]

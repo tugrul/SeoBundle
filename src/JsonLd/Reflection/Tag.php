@@ -1,8 +1,8 @@
 <?php
 
-namespace Tug\SeoBundle\Reflection\JsonLd;
+namespace Tug\SeoBundle\JsonLd\Reflection;
 
-use Tug\SeoBundle\Attribute\JsonLd;
+use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 class Tag
 {

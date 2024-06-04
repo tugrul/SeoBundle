@@ -4,15 +4,15 @@ namespace Tug\SeoBundle\Tests\Reflection;
 
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Exception\{JsonLdTypeException, JsonLdAttributeException};
-use Tug\SeoBundle\Reflection\JsonLd\Attribute as JsonLdAttributeReflector;
+use Tug\SeoBundle\JsonLd\Reflection\Attribute as JsonLdAttributeReflector;
 use Tug\SeoBundle\Tests\Stub\JsonLd\{DummyEmptyModel,
     DummyMixedContextModel,
     DummyMultiModel,
     DummyMultiTypeFieldModel,
     DummySingleModel,
-    DummyValidModel};
-use Tug\SeoBundle\Attribute\JsonLd as JsonLdAttribute;
-use Tug\SeoBundle\Reflection\JsonLd\{Tag as JsonLdTag, Field as JsonLdField};
+    DummyValidModel, DummyModelLevel};
+use Tug\SeoBundle\JsonLd\Attribute as JsonLdAttribute;
+use Tug\SeoBundle\JsonLd\Reflection\{Tag as JsonLdTag, Field as JsonLdField};
 
 
 class JsonLdAttributeTest extends TestCase
@@ -404,6 +404,24 @@ class JsonLdAttributeTest extends TestCase
             $this->assertEquals($item, $field->value);
         }
 
-        $this->assertEquals(['AnotherValidKind', 'GoodValidKind'], $result['var']->types);
+        $this->assertEquals(['AnotherValidKind', 'GoodValidKind'], $result['var']->property->types);
+    }
+
+    public function testGenericFields(): void
+    {
+        $reflector = new JsonLdAttributeReflector(DummyModelLevel::class);
+        $type = $reflector->getType();
+
+        $toNames = fn($fields) => array_map(fn($field) => $field->name, $fields);
+
+        $this->assertEquals(['gen1', 'gen2', 'gen3'], $toNames($reflector->getGenericProperties($type, 1)));
+
+        $this->assertEquals(['gen1', 'gen3', 'gen4'], $toNames($reflector->getGenericProperties($type, 2)));
+
+        $this->assertEquals(['gen1', 'gen4', 'gen5'], $toNames($reflector->getGenericProperties($type, 3)));
+
+        $this->assertEquals(['gen1', 'gen4', 'gen5'], $toNames($reflector->getGenericProperties($type, 4)));
+
+        $this->assertEquals(['gen1', 'gen4'], $toNames($reflector->getGenericProperties($type, 5)));
     }
 }
