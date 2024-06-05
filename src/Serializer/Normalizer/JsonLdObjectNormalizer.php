@@ -56,9 +56,20 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
         }
 
         $reflector = JsonLdAttribute::getInstance($object::class);
+        $origRef = $reflector->getReflector();
 
-        if ($reflector->getReflector()->isEnum()) {
+        if ($origRef->isEnum()) {
             return $object->value;
+        }
+
+        if ($origRef->isIterable()) {
+            $result = [];
+
+            foreach ($object as $key => $value) {
+                $result[$key] = $this->normalizer->normalize($value, $format, $context);
+            }
+
+            return $result;
         }
 
         $reflector->setDefaultContext($options['defaultContext'] ?? null);

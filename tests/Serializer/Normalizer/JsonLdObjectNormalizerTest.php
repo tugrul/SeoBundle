@@ -114,6 +114,34 @@ class JsonLdObjectNormalizerTest extends TestCase
         ], $this->serializer->normalize($breadcrumb, 'ld+json'));
     }
 
+    public function testIterables(): void
+    {
+        $item1 = new ListItem();
+        $item1->setItem(['@id' => 'https://example.org/foo']);
+
+        $item1->url = 'https://example.org/foo';
+
+        $item2 = new ListItem();
+        $item2->setItem(['@id' => 'https://example.org/bar']);
+
+        $item2->url = 'https://example.org/bar';
+
+        $iterator = new \ArrayIterator([$item1, $item2]);
+
+        $this->assertEquals([
+            [
+                '@type' => 'ListItem',
+                'item' => ['@id' => 'https://example.org/foo'],
+                'url' => 'https://example.org/foo'
+            ],
+            [
+                '@type' => 'ListItem',
+                'item' => ['@id' => 'https://example.org/bar'],
+                'url' => 'https://example.org/bar'
+            ]
+        ], $this->serializer->normalize($iterator, 'ld+json'));
+    }
+
     public function testTranslateAssocField(): void
     {
         $thing = [
