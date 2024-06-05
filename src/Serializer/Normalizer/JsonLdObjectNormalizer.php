@@ -6,6 +6,7 @@ use Symfony\Component\Serializer\Normalizer\{NormalizerAwareInterface, Normalize
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
 use Tug\SeoBundle\Exception\JsonLdAttributeException;
 use Tug\SeoBundle\Exception\JsonLdTypeException;
 use Tug\SeoBundle\JsonLd\Reflection\{Attribute as JsonLdAttribute, Field as JsonLdField};
@@ -180,7 +181,13 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
      */
     public function supportsNormalization(mixed $data, ?string $format = null): bool
     {
-        return is_object($data) && ($format === 'ld+json');
+        return is_object($data) && $this->isNotExcluded($data) && ($format === 'ld+json');
+    }
+
+    protected function isNotExcluded(mixed $data): bool
+    {
+        return !(($data instanceof \DateTimeInterface) || ($data instanceof \DateInterval) ||
+            ($data instanceof TranslatableInterface));
     }
 
     public function getSupportedTypes(?string $format): array
