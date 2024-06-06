@@ -17,6 +17,8 @@ use Tug\SeoBundle\Serializer\Normalizer\{JsonLdArrayNormalizer,  JsonLdObjectNor
 use Tug\SeoBundle\Tests\Stub\JsonLd\DummyMixedContextModel;
 use Tug\SeoBundle\Tests\Stub\JsonLd\DummyModelLevel;
 use Tug\SeoBundle\Tests\Stub\JsonLd\DummyFilterModel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\DummyCollectionModel;
+
 
 use Tug\SeoBundle\Translate\TranslationType;
 use Tug\SeoBundle\Translate\Translator;
@@ -59,6 +61,7 @@ class JsonLdObjectNormalizerTest extends TestCase
         $jsonLdRegistry->setFilter('pick_params', fn(FilterData $data) => $data->params);
         $jsonLdRegistry->setFilter('pick_value', fn(FilterData $data) => $data->params['value'] ?? null);
         $jsonLdRegistry->setFilter('array_flip', fn(FilterData $data) => array_flip($data->value));
+        $jsonLdRegistry->setFilter('append_str', fn(FilterData $data) => $data->value . ($data->params['suffix'] ?? ''));
 
         $this->serializer = new Serializer([
             new JsonLdArrayNormalizer($this->getTranslator(), $jsonLdRegistry),
@@ -140,6 +143,14 @@ class JsonLdObjectNormalizerTest extends TestCase
                 'url' => 'https://example.org/bar'
             ]
         ], $this->serializer->normalize($iterator, 'ld+json'));
+    }
+
+    public function testIterablesFilters()
+    {
+        $model = new DummyCollectionModel();
+
+        $this->assertEquals(['@type' => 'Test', 'zo' => ['1a', '2a', '3a']],
+            $this->serializer->normalize($model, 'ld+json'));
     }
 
     public function testTranslateAssocField(): void

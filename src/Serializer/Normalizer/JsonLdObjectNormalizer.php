@@ -140,6 +140,16 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
     {
         $value = $field->value;
 
+        if (is_object($value) && is_iterable($value)) {
+            $values = [];
+
+            foreach ($value as $key => $item) {
+                $values[$key] = $this->applyFilters(new JsonLdField($item, $field->property), $filter);
+            }
+
+            return new \ArrayIterator($values);
+        }
+
         $filters = $field->getFilters();
 
         foreach ($filters as $filterName => $params) {
