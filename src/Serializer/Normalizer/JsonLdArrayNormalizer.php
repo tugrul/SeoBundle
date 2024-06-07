@@ -91,7 +91,9 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
 
                 $targetTypes = $this->jsonLdRegistry->getFieldTypes($currentType, $key);
                 $context = [...$context, 'jsonLd' => [...$options, 'target' => $targetTypes, 'level' => $level + 1]];
-            } elseif (is_null($value)) {
+            }
+
+            if (is_null($value)) {
                 continue;
             }
 
@@ -131,7 +133,9 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
             $result[$key] = $this->normalizer->normalize($value, $format, $context);
         }
 
-        return $result;
+        $nonIntKeys = array_filter(array_keys($result), fn($item) => !is_int($item));
+
+        return count($nonIntKeys) > 0 ? $result : array_values($result);
     }
 
     protected function matchField(string $value, array $parameters): ?array

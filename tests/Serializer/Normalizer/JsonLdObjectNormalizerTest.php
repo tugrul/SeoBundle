@@ -168,6 +168,22 @@ class JsonLdObjectNormalizerTest extends TestCase
         ], $this->serializer->normalize($thing, 'ld+json', $context));
     }
 
+    public function testReindexKeysWhenNoParameter()
+    {
+        $list = ['{foo}', 'bar', '{other}'];
+
+        $context = ['jsonLd' => [
+            'parameters' => [
+                'foo' => null,
+                'someParam' => 'Fuu',
+                'other' => 'Zabazingo'
+            ]
+        ]];
+
+        $this->assertEquals(['bar', 'Zabazingo'],
+            $this->serializer->normalize($list, 'ld+json', $context));
+    }
+
     public function testExpandTranslateStringField(): void
     {
         $context = ['jsonLd' => [
