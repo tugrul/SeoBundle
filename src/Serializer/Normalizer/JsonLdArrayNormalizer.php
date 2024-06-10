@@ -3,8 +3,10 @@
 namespace Tug\SeoBundle\Serializer\Normalizer;
 
 use Symfony\Component\Serializer\Normalizer\{NormalizerAwareInterface, NormalizerAwareTrait, NormalizerInterface};
+use Tug\SeoBundle\JsonLd\Modifier\ModifierData;
 use Tug\SeoBundle\Registry\JsonLdInterface as JsonLdRegistryInterface;
 use Tug\SeoBundle\Translate\TranslatorInterface;
+use Tug\SeoBundle\JsonLd\Attribute\Type as JsonLdType;
 
 
 class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInterface
@@ -38,15 +40,7 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
 
         $result = [];
 
-        if (isset($object['@type'])) {
-            if (isset($object['@context'])) {
-                $currentType = [$object['@context'], $object['@type']];
-            } else {
-                $currentType = $object['@type'];
-            }
-        } else {
-            $currentType = [];
-        }
+        $currentType = isset($object['@type']) ? new JsonLdType($object['@type'], $object['@context'] ?? null) : null;
 
         foreach ($object as $key => $value) {
 
@@ -72,7 +66,7 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
                             continue;
                         }
 
-                        $targetTypes = $this->jsonLdRegistry->getFieldTypes($currentType, $key);
+                        $targetTypes = is_null($currentType) ? [] : $this->jsonLdRegistry->getFieldTypes($currentType, $key);
                         $context = [...$context, 'jsonLd' => [...$options, 'target' => $targetTypes,
                             'level' => $level + 1]];
 
@@ -89,7 +83,7 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
                     }
                 }
 
-                $targetTypes = $this->jsonLdRegistry->getFieldTypes($currentType, $key);
+                $targetTypes = is_null($currentType) ? [] : $this->jsonLdRegistry->getFieldTypes($currentType, $key);
                 $context = [...$context, 'jsonLd' => [...$options, 'target' => $targetTypes, 'level' => $level + 1]];
             }
 
@@ -135,7 +129,30 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
 
         $nonIntKeys = array_filter(array_keys($result), fn($item) => !is_int($item));
 
-        return count($nonIntKeys) > 0 ? $result : array_values($result);
+        if (count($nonIntKeys) === 0) {
+            return array_values($result);
+        }
+
+        if ($currentType !== null) {
+            $modifierData = new ModifierData($currentType, $level, $result);
+            $modifier = $this->jsonLdRegistry->applyModifier($modifierData);
+
+            foreach ($modifier as $key => $value) {
+                if (is_null($value) || (is_array($value) && count($value) === 0)) {
+                    unset($result[$key]);
+                    continue;
+                }
+
+                if (is_scalar($value)) {
+                    $result[$key] = $value;
+                    continue;
+                }
+
+                $result[$key] = $this->normalizer->normalize($value, $format, $context);
+            }
+        }
+
+        return $result;
     }
 
     protected function matchField(string $value, array $parameters): ?array

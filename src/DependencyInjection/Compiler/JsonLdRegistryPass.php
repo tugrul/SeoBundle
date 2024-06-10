@@ -35,6 +35,12 @@ class JsonLdRegistryPass implements CompilerPassInterface
 
             $definition->addMethodCall('setFilter', [$class::getHandle(), [new Reference($id), 'action']]);
         }
+
+        $modifiers = $container->findTaggedServiceIds('tug_seo.jsonld.modifier');
+
+        foreach ($modifiers as $id => $tags) {
+            $definition->addMethodCall('setModifier', [ new Reference($id) ]);
+        }
     }
 
 }

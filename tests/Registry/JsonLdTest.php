@@ -5,6 +5,8 @@ namespace Tug\SeoBundle\Tests\Registry;
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Registry\JsonLd;
 
+use Tug\SeoBundle\JsonLd\Attribute\Type as JsonLdType;
+
 class JsonLdTest extends TestCase
 {
     public function testBasics()
@@ -30,35 +32,41 @@ class JsonLdTest extends TestCase
             ]
         ]);
 
-        $this->assertEmptyArray($registry->getFieldTypes(['https://example.org', 'NonExistType'], 'noField'));
+        $this->assertEmptyArray($registry->getFieldTypes(JsonLdType::from(['https://example.org', 'NonExistType']), 'noField'));
 
-        $this->assertEmptyArray($registry->getFieldTypes(['NonExistType'], 'noField'));
+        $this->assertEmptyArray($registry->getFieldTypes(JsonLdType::from(['NonExistType']), 'noField'));
 
-        $this->assertEmptyArray($registry->getFieldTypes('NonExistType', 'noField'));
+        $this->assertEmptyArray($registry->getFieldTypes(JsonLdType::from('NonExistType'), 'noField'));
 
-        $this->assertEmptyArray($registry->getFieldTypes('Foo', 'noField'));
+        $this->assertEmptyArray($registry->getFieldTypes(JsonLdType::from(['Foo']), 'noField'));
 
-        $this->assertEmptyArray($registry->getFieldTypes(['Foo'], 'noField'));
+        $fooType = JsonLdType::from('Foo');
 
-        $this->assertEquals(['Type1'], $registry->getFieldTypes('Foo', 'field1'));
+        $this->assertEmptyArray($registry->getFieldTypes($fooType, 'noField'));
 
-        $this->assertEquals(['Type2'], $registry->getFieldTypes('Foo', 'field2'));
+        $this->assertEquals(['Type1'], $registry->getFieldTypes($fooType, 'field1'));
 
-        $this->assertEquals(['Type3'], $registry->getFieldTypes('Bar', 'field3'));
+        $this->assertEquals(['Type2'], $registry->getFieldTypes($fooType, 'field2'));
 
-        $this->assertEquals(['Type5'], $registry->getFieldTypes('Bar', 'field5'));
+        $barType = JsonLdType::from('Bar');
 
-        $this->assertEquals(['Type11'], $registry->getFieldTypes('Baz', 'field1'));
+        $this->assertEquals(['Type3'], $registry->getFieldTypes($barType, 'field3'));
 
-        $this->assertEquals(['Type2'], $registry->getFieldTypes('Baz', 'field2'));
+        $this->assertEquals(['Type5'], $registry->getFieldTypes($barType, 'field5'));
 
-        $this->assertEquals(['Type33'], $registry->getFieldTypes('Baz', 'field3'));
+        $bazType = JsonLdType::from('Baz');
 
-        $this->assertEquals(['Type44'], $registry->getFieldTypes('Baz', 'field4'));
+        $this->assertEquals(['Type11'], $registry->getFieldTypes($bazType, 'field1'));
 
-        $this->assertEquals(['Type5'], $registry->getFieldTypes('Baz', 'field5'));
+        $this->assertEquals(['Type2'], $registry->getFieldTypes($bazType, 'field2'));
 
-        $this->assertEquals(['Type111'], $registry->getFieldTypes(['https://example.org', 'Foo'], 'field1'));
+        $this->assertEquals(['Type33'], $registry->getFieldTypes($bazType, 'field3'));
+
+        $this->assertEquals(['Type44'], $registry->getFieldTypes($bazType, 'field4'));
+
+        $this->assertEquals(['Type5'], $registry->getFieldTypes($bazType, 'field5'));
+
+        $this->assertEquals(['Type111'], $registry->getFieldTypes(JsonLdType::from(['https://example.org', 'Foo']), 'field1'));
     }
 
     protected function assertEmptyArray($actual, string $message = ''): void

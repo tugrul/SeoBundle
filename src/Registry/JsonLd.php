@@ -3,6 +3,8 @@
 namespace Tug\SeoBundle\Registry;
 
 use Tug\SeoBundle\JsonLd\Filter\FilterData;
+use Tug\SeoBundle\JsonLd\Modifier\{ModifierData, ModifierInterface};
+use Tug\SeoBundle\JsonLd\Attribute\Type as JsonLdType;
 
 class JsonLd implements JsonLdInterface
 {
@@ -13,6 +15,8 @@ class JsonLd implements JsonLdInterface
     protected array $registry = [];
 
     protected array $filters = [];
+
+    protected array $modifiers = [];
 
     public function setTypes(array $types): static
     {
@@ -38,29 +42,20 @@ class JsonLd implements JsonLdInterface
         return $this;
     }
 
-    public function getFieldTypes(array|string $type, string $field): array
+    public function getFieldTypes(JsonLdType $type, string $field): array
     {
-        if (is_string($type)) {
-            $context = $this->defaultContext;
-        } else {
-            switch (count($type)) {
-                case 0: return [];
-                case 1: $type = $type[0]; break;
-                default: $context = $type[0] ?? $this->defaultContext; $type = $type[1];
-            }
-        }
-
-        $context = $context ?? self::DEFAULT_CONTEXT_PLACEHOLDER;
+        $context = $type->context ?? $this->defaultContext ?? self::DEFAULT_CONTEXT_PLACEHOLDER;
+        $typeName = $type->name;
 
         if (!isset($this->registry[$context])) {
             return [];
         }
 
-        if (!isset($this->registry[$context][$type])) {
+        if (!isset($this->registry[$context][$typeName])) {
             return [];
         }
 
-        $item = $this->registry[$context][$type];
+        $item = $this->registry[$context][$typeName];
 
         if (isset($item['fields'][$field])) {
             return $item['fields'][$field];
@@ -69,7 +64,7 @@ class JsonLd implements JsonLdInterface
         $parents = $item['parents'] ?? [];
 
         foreach ($parents as $parent) {
-            $result = $this->getFieldTypes($parent, $field);
+            $result = $this->getFieldTypes(JsonLdType::from($parent), $field);
 
             if (!empty($result)) {
                 return $result;
@@ -95,5 +90,33 @@ class JsonLd implements JsonLdInterface
 
         return $this->filters[$handle]($data);
     }
+
+    public function setModifier(ModifierInterface $modifier): static
+    {
+        $context = $modifier::getContext() ?? $this->defaultContext ?? self::DEFAULT_CONTEXT_PLACEHOLDER;
+
+        $type = $modifier::getType();
+
+        if (isset($this->modifiers[$context])) {
+            $this->modifiers[$context][$type] = $modifier;
+        } else {
+            $this->modifiers[$context] = [$type => $modifier];
+        }
+
+        return $this;
+    }
+
+    public function applyModifier(ModifierData $data): iterable
+    {
+        $context = $data->type->context ?? $this->defaultContext ?? self::DEFAULT_CONTEXT_PLACEHOLDER;
+        $name = $data->type->name;
+
+        if (!isset($this->modifiers[$context]) || !isset($this->modifiers[$context][$name])) {
+            return [];
+        }
+
+        return $this->modifiers[$context][$name]->modify($data);
+    }
+
 }
 

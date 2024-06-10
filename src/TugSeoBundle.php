@@ -12,6 +12,7 @@ use Tug\SeoBundle\DependencyInjection\Compiler\{FieldRegistryPass,
     TranslatableFieldPass};
 use Tug\SeoBundle\Field\{FieldInterface, TranslatableFieldInterface, SerializableFieldInterface};
 use Tug\SeoBundle\JsonLd\Filter\FilterInterface;
+use Tug\SeoBundle\JsonLd\Modifier\ModifierInterface;
 use Tug\SeoBundle\Renderer\RendererInterface;
 
 class TugSeoBundle extends Bundle
@@ -36,6 +37,9 @@ class TugSeoBundle extends Bundle
 
         $container->registerForAutoconfiguration(FilterInterface::class)
             ->addTag('tug_seo.jsonld.filter');
+
+        $container->registerForAutoconfiguration(ModifierInterface::class)
+            ->addTag('tug_seo.jsonld.modifier');
 
         $container->addCompilerPass(new RendererRegistryPass());
 

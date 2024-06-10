@@ -4,7 +4,9 @@ namespace Tug\SeoBundle\Tests\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
 
-use Tug\SeoBundle\Tests\Stub\JsonLd\Modifier\{NoNamespaceModifier, WithNamespaceModifier};
+use Tug\SeoBundle\Tests\Stub\JsonLd\Modifier\{NoContextModifier, WithContextModifier};
+use Tug\SeoBundle\Tests\Stub\JsonLd\ModifiedType;
+use Tug\SeoBundle\Tests\Stub\JsonLd\ModifiedTypeContext;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface as TranslatorServiceInterface;
 use Tug\SeoBundle\JsonLd\Filter\FilterData;
@@ -58,6 +60,9 @@ class JsonLdObjectNormalizerTest extends TestCase
             'fields' => ['mixedField' => ['abc']]]
         ]);
 
+        $jsonLdRegistry->setModifier(new WithContextModifier());
+        $jsonLdRegistry->setModifier(new NoContextModifier());
+
         $jsonLdRegistry->setFilter('test', fn() => null);
         $jsonLdRegistry->setFilter('pick_params', fn(FilterData $data) => $data->params);
         $jsonLdRegistry->setFilter('pick_value', fn(FilterData $data) => $data->params['value'] ?? null);
@@ -78,6 +83,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
         $this->assertEquals([
             '@type' => 'BreadcrumbList',
+            '@context' => 'https://schema.org',
             'numberOfItems' => 0,
             'itemListOrder' => 'https://schema.org/ItemListOrderAscending'
         ], $this->serializer->normalize($breadcrumb, 'ld+json'));
@@ -102,15 +108,18 @@ class JsonLdObjectNormalizerTest extends TestCase
 
         $this->assertEquals([
             '@type' => 'BreadcrumbList',
+            '@context' => 'https://schema.org',
             'numberOfItems' => 2,
             'itemListElement' => [
                 [
                     '@type' => 'ListItem',
+                    '@context' => 'https://schema.org',
                     'item' => ['@id' => 'https://example.org/foo'],
                     'url' => 'https://example.org/foo'
                 ],
                 [
                     '@type' => 'ListItem',
+                    '@context' => 'https://schema.org',
                     'item' => ['@id' => 'https://example.org/bar'],
                     'url' => 'https://example.org/bar'
                 ]
@@ -135,11 +144,13 @@ class JsonLdObjectNormalizerTest extends TestCase
         $this->assertEquals([
             [
                 '@type' => 'ListItem',
+                '@context' => 'https://schema.org',
                 'item' => ['@id' => 'https://example.org/foo'],
                 'url' => 'https://example.org/foo'
             ],
             [
                 '@type' => 'ListItem',
+                '@context' => 'https://schema.org',
                 'item' => ['@id' => 'https://example.org/bar'],
                 'url' => 'https://example.org/bar'
             ]
@@ -280,7 +291,7 @@ class JsonLdObjectNormalizerTest extends TestCase
     {
         $list = [(new ListItem())->setItem(123)];
 
-        $this->assertEquals([['@type' => 'ListItem', 'item' => 123]],
+        $this->assertEquals([['@type' => 'ListItem', '@context' => 'https://schema.org', 'item' => 123]],
             $this->serializer->normalize($list, 'ld+json'));
     }
 
@@ -294,7 +305,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
         $target = [
             '@type' => 'Fubu',
-            'itemList' => [['@type' => 'ListItem', 'item' => 123]],
+            'itemList' => [['@type' => 'ListItem', '@context' => 'https://schema.org', 'item' => 123]],
             'mixedField' => [
                 '@type' => 'abc',
                 'fil1' => 'aaa', 'fil2' => 'bbb', 'fil3' => 'ccc'
@@ -390,5 +401,55 @@ class JsonLdObjectNormalizerTest extends TestCase
             'mokoko' => 'abc',
             'chain' => ['abc' => 'f1', 365 => 'f2']
         ], $this->serializer->normalize($model, 'ld+json'));
+    }
+
+    public function testModifierWithContext(): void
+    {
+        $model = new ModifiedTypeContext();
+
+        $target = [
+            '@context' => 'https://example.com',
+            '@type' => 'ModifiedType',
+            'secondField' => 9876,
+            'changedField' => 'bbbb',
+            'noExistsField' => 1234,
+            'nonMappedProp' => 7654
+        ];
+
+        $this->assertEquals($target, $this->serializer->normalize($model, 'ld+json'));
+
+        $data = [
+            '@context' => 'https://example.com',
+            '@type' => 'ModifiedType',
+            'existsField' => 'abcd',
+            'secondField' => 9876,
+            'changedField' => 'aaaa'
+        ];
+
+        $this->assertEquals([...$target, 'nonMappedProp' => 7744], $this->serializer->normalize($data, 'ld+json'));
+    }
+
+    public function testModifierNoContext(): void
+    {
+        $model = new ModifiedType();
+
+        $target = [
+            '@type' => 'ModifiedType',
+            'secondField2' => 9876,
+            'changedField2' => 'cccc',
+            'noExistsField2' => 5678,
+            'nonMappedProp' => 5476
+        ];
+
+        $this->assertEquals($target, $this->serializer->normalize($model, 'ld+json'));
+
+        $data = [
+            '@type' => 'ModifiedType',
+            'existsField2' => 'abcd',
+            'secondField2' => 9876,
+            'changedField2' => 'aaaa'
+        ];
+
+        $this->assertEquals([...$target, 'nonMappedProp' => 9954], $this->serializer->normalize($data, 'ld+json'));
     }
 }

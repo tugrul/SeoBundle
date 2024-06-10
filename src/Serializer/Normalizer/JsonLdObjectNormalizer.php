@@ -10,6 +10,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 use Tug\SeoBundle\Exception\JsonLdAttributeException;
 use Tug\SeoBundle\Exception\JsonLdTypeException;
 use Tug\SeoBundle\JsonLd\Reflection\{Attribute as JsonLdAttribute, Field as JsonLdField};
+use Tug\SeoBundle\JsonLd\Modifier\ModifierData;
 use Tug\SeoBundle\Registry\JsonLd as JsonLdRegistryInterface;
 
 use Tug\SeoBundle\JsonLd\Filter\FilterData;
@@ -51,7 +52,7 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
             $object = array_map(fn($item) => new JsonLdField($item), get_object_vars($object));
 
             $normalizer = fn($value) => $this->normalizer->normalize($value, $format,
-                [...$context, 'jsonLd' => [...$options, 'target' => $target, 'level' => $level + 1]]);
+                [...$context, 'jsonLd' => [...$options, 'level' => $level + 1]]);
 
             return $this->mapResult($object, $normalizer);
         }
@@ -79,7 +80,7 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
 
         $fields = $reflector->toArray($type, $object, $level);
 
-        $normalizer = fn($value, $types) => $this->normalizer->normalize($value, $format,
+        $normalizer = fn($value, $types = []) => $this->normalizer->normalize($value, $format,
             [...$context, 'jsonLd' => [...$options, 'target' => $types, 'level' => $level + 1]]);
 
         $filter = fn($name, $property, $value, $params) => $this->jsonLdRegistry->applyFilter($name,
@@ -90,9 +91,26 @@ class JsonLdObjectNormalizer implements NormalizerInterface, NormalizerAwareInte
         $properties = array_map(fn($property) => new JsonLdField($object, $property),
             $reflector->getGenericProperties($type, $level));
 
-        $result = array_merge($result, $this->mapResult($properties, $normalizer, $filter));
+        $result = $type->toArray() + array_merge($result, $this->mapResult($properties, $normalizer, $filter));
 
-        return $type->toArray() + $result;
+        $modifierData = new ModifierData($type, $level, $result, $object);
+        $modifier = $this->jsonLdRegistry->applyModifier($modifierData);
+
+        foreach ($modifier as $key => $value) {
+            if (is_null($value) || (is_array($value) && count($value) === 0)) {
+                unset($result[$key]);
+                continue;
+            }
+
+            if (is_scalar($value)) {
+                $result[$key] = $value;
+                continue;
+            }
+
+            $result[$key] = $normalizer($value);
+        }
+
+        return $result;
     }
 
     /**
