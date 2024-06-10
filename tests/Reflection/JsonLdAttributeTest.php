@@ -5,12 +5,12 @@ namespace Tug\SeoBundle\Tests\Reflection;
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Exception\{JsonLdTypeException, JsonLdAttributeException};
 use Tug\SeoBundle\JsonLd\Reflection\Attribute as JsonLdAttributeReflector;
-use Tug\SeoBundle\Tests\Stub\JsonLd\{DummyEmptyModel,
-    DummyMixedContextModel,
-    DummyMultiModel,
-    DummyMultiTypeFieldModel,
-    DummySingleModel,
-    DummyValidModel, DummyModelLevel};
+use Tug\SeoBundle\Tests\Stub\JsonLd\{EmptyModel,
+    MixedContextModel,
+    MultiModel,
+    MultiTypeFieldModel,
+    SingleModel,
+    ValidModel, ModelLevel};
 use Tug\SeoBundle\JsonLd\Attribute as JsonLdAttribute;
 use Tug\SeoBundle\JsonLd\Reflection\{Tag as JsonLdTag, Field as JsonLdField};
 
@@ -19,7 +19,7 @@ class JsonLdAttributeTest extends TestCase
 {
     public function testEmptyModelType(): void
     {
-        $model = new DummyEmptyModel();
+        $model = new EmptyModel();
         $reflector = new JsonLdAttributeReflector($model::class);
 
         $types = $reflector->getTypes();
@@ -38,7 +38,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testSingleModelType(): void
     {
-        $model = new DummySingleModel();
+        $model = new SingleModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -69,7 +69,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testDefaultContext(): void
     {
-        $model = new DummySingleModel();
+        $model = new SingleModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -100,7 +100,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testDefaultContextDefinedModel(): void
     {
-        $model = new DummyMixedContextModel();
+        $model = new MixedContextModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -134,7 +134,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testGetTags(): void
     {
-        $model = new DummyMultiModel();
+        $model = new MultiModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -228,7 +228,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testGetTagsMultiMatchException(): void
     {
-        $model = new DummyMultiTypeFieldModel();
+        $model = new MultiTypeFieldModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -244,7 +244,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testGetterMethods(): void
     {
-        $model = new DummyMultiModel();
+        $model = new MultiModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -268,7 +268,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testFilterAttributes(): void
     {
-        $model = new DummyMultiTypeFieldModel();
+        $model = new MultiTypeFieldModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -314,7 +314,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testMultiModelType(): void
     {
-        $model = new DummyMultiModel();
+        $model = new MultiModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -339,7 +339,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testMultiModelTarget(): void
     {
-        $model = new DummyMultiModel();
+        $model = new MultiModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -352,7 +352,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testFilterTypes(): void
     {
-        $model = new DummyMixedContextModel();
+        $model = new MixedContextModel();
 
         $reflector = new JsonLdAttributeReflector($model::class);
 
@@ -379,7 +379,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testToArray(): void
     {
-        $model = new DummyValidModel();
+        $model = new ValidModel();
 
         $model->setVar('varval');
 
@@ -409,7 +409,7 @@ class JsonLdAttributeTest extends TestCase
 
     public function testGenericFields(): void
     {
-        $reflector = new JsonLdAttributeReflector(DummyModelLevel::class);
+        $reflector = new JsonLdAttributeReflector(ModelLevel::class);
         $type = $reflector->getType();
 
         $toNames = fn($fields) => array_map(fn($field) => $field->name, $fields);

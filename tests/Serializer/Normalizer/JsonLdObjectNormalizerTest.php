@@ -4,6 +4,7 @@ namespace Tug\SeoBundle\Tests\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
 
+use Tug\SeoBundle\Tests\Stub\JsonLd\Modifier\{NoNamespaceModifier, WithNamespaceModifier};
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface as TranslatorServiceInterface;
 use Tug\SeoBundle\JsonLd\Filter\FilterData;
@@ -14,10 +15,10 @@ use Tug\SeoBundle\Schema\Type\ListItem;
 use Tug\SeoBundle\Serializer\Normalizer\{JsonLdArrayNormalizer,  JsonLdObjectNormalizer};
 
 
-use Tug\SeoBundle\Tests\Stub\JsonLd\DummyMixedContextModel;
-use Tug\SeoBundle\Tests\Stub\JsonLd\DummyModelLevel;
-use Tug\SeoBundle\Tests\Stub\JsonLd\DummyFilterModel;
-use Tug\SeoBundle\Tests\Stub\JsonLd\DummyCollectionModel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\MixedContextModel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\ModelLevel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\FilterModel;
+use Tug\SeoBundle\Tests\Stub\JsonLd\CollectionModel;
 
 
 use Tug\SeoBundle\Translate\TranslationType;
@@ -147,7 +148,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
     public function testIterablesFilters()
     {
-        $model = new DummyCollectionModel();
+        $model = new CollectionModel();
 
         $this->assertEquals(['@type' => 'Test', 'zo' => ['1a', '2a', '3a']],
             $this->serializer->normalize($model, 'ld+json'));
@@ -288,7 +289,7 @@ class JsonLdObjectNormalizerTest extends TestCase
         $type = [
             '@type' => 'Fubu',
             'itemList' => [(new ListItem())->setItem(123)],
-            'mixedField' => new DummyMixedContextModel()
+            'mixedField' => new MixedContextModel()
         ];
 
         $target = [
@@ -305,7 +306,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
     public function testVariableArrayObjectMixed(): void
     {
-        $field = new DummyMixedContextModel();
+        $field = new MixedContextModel();
 
         $type = [
             '@type' => 'Fubu',
@@ -328,7 +329,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
     public function testVariableExpandObjectMixed(): void
     {
-        $field = new DummyMixedContextModel();
+        $field = new MixedContextModel();
 
         $type = [
             '@type' => 'Fubu',
@@ -351,7 +352,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
     public function testFieldLevel(): void
     {
-        $field = new DummyModelLevel();
+        $field = new ModelLevel();
 
         $this->assertEquals(['@type' => 'LevelModel', 'aaa' => 'abc123', 'bbb' => 'def456', 'ccc' => 'how is this?'],
             $this->serializer->normalize($field, 'ld+json', ['jsonLd' => [
@@ -381,7 +382,7 @@ class JsonLdObjectNormalizerTest extends TestCase
 
     public function testGenericProperties(): void
     {
-        $model = new DummyFilterModel();
+        $model = new FilterModel();
 
         $this->assertEquals([
             '@type' => 'Zoka',

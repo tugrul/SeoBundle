@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Registry;
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Registry\Renderer;
 use Tug\SeoBundle\Renderer\{Link, Meta, Title};
-use Tug\SeoBundle\Tests\Stub\{DummyFaultyModel, DummyFaultyRenderer, DummyModel};
+use Tug\SeoBundle\Tests\Stub\{FaultyModel, FaultyRenderer, Model};
 use Tug\SeoBundle\Model\{Title as TitleModel, Link as LinkModel, Meta as MetaModel};
 
 class RendererTest extends TestCase
@@ -38,7 +38,7 @@ class RendererTest extends TestCase
         $this->assertEquals('<meta property="zipzip" content="lalalocola" />',
             $renderer->render($meta));
 
-        $notRegistered = new DummyModel();
+        $notRegistered = new Model();
         $notRegistered->setSomething('hebelehop');
 
         $this->expectException(\RuntimeException::class);
@@ -49,13 +49,13 @@ class RendererTest extends TestCase
     {
         $renderer = new Renderer();
         $this->expectException(\RuntimeException::class);
-        $renderer->set(new DummyFaultyRenderer());
+        $renderer->set(new FaultyRenderer());
     }
 
     public function testFaultyField2(): void
     {
         $renderer = new Renderer();
         $this->expectException(\RuntimeException::class);
-        $renderer->set(new DummyFaultyRenderer(DummyFaultyModel::class));
+        $renderer->set(new FaultyRenderer(FaultyModel::class));
     }
 }

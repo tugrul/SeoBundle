@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Tests\Stub\JsonLd;
 
-class DummyEmptyModel
+class EmptyModel
 {
 
 }

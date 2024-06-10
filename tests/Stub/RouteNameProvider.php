@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 
 use Tug\SeoBundle\Provider\RouteNameProviderInterface;
 
-class DummyRouteNameProvider implements RouteNameProviderInterface
+class RouteNameProvider implements RouteNameProviderInterface
 {
     protected string $currentRouteName = '';
 

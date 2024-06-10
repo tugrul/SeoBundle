@@ -7,7 +7,7 @@ use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 #[JsonLd\Type('abc')]
 #[JsonLd\Type('def', 'https://example.com')]
 #[JsonLd\Type('ghi', 'https://example.org')]
-class DummyMixedContextModel
+class MixedContextModel
 {
     #[JsonLd\Property('fil1')]
     public string $field1 = 'aaa';

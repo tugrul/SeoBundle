@@ -4,13 +4,13 @@ namespace Tug\SeoBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Translate\{TranslationType, Translator};
-use Tug\SeoBundle\Tests\Stub\{DummyTranslator, DummyTranslatorService};
+use Tug\SeoBundle\Tests\Stub\{Translator as TranslatorStub, TranslatorService};
 
 class TranslatorTest extends TestCase
 {
     public function testTranslatorInterface(): void
     {
-        $translator = new DummyTranslator();
+        $translator = new TranslatorStub();
 
         $translator->setType(TranslationType::Icu);
         $translator->setFormatTemplate(['[', ']']);
@@ -26,7 +26,7 @@ class TranslatorTest extends TestCase
 
     public function testTranslator(): void
     {
-        $translator = new Translator(new DummyTranslatorService());
+        $translator = new Translator(new TranslatorService());
 
         $translator->setType(TranslationType::Icu);
         $translator->setFormatTemplate(['{', '}']);

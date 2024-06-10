@@ -10,7 +10,7 @@ use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 #[JsonLd\Property('gen3', level: 2, filters: 'test')]
 #[JsonLd\Property('gen4', level: [2], filters: 'test')]
 #[JsonLd\Property('gen5', level: [3, 4], filters: 'test')]
-class DummyModelLevel
+class ModelLevel
 {
     #[JsonLd\Property('aaa', level: 1)]
     public string $field1 = 'abc123';

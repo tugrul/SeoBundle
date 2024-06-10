@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Field\Basic\Description;
 use Tug\SeoBundle\Registry\{Context, Field as FieldRegistry, Renderer};
 use Tug\SeoBundle\Renderer\{Link, Meta, Title};
-use Tug\SeoBundle\Tests\Stub\{DummyField, DummyFieldTranslatorService, DummyRouteNameProvider};
+use Tug\SeoBundle\Tests\Stub\{Field, FieldTranslatorService, RouteNameProvider};
 use Tug\SeoBundle\Translate\{TranslationType, Translator};
 use Tug\SeoBundle\Field\Basic\Title as TitleField;
 use Tug\SeoBundle\Twig\TugSeoExtension;
@@ -21,14 +21,14 @@ class TugSeoExtensionTest extends TestCase
 
     protected FieldRegistry $field;
 
-    protected DummyRouteNameProvider $routeNameProvider;
+    protected RouteNameProvider $routeNameProvider;
 
     /**
      * @inheritDoc
      */
     protected function setUp(): void
     {
-        $translator = new Translator(new DummyFieldTranslatorService());
+        $translator = new Translator(new FieldTranslatorService());
         $translator->setType(TranslationType::None);
 
         $loader = new ArrayLoader([
@@ -55,7 +55,7 @@ class TugSeoExtensionTest extends TestCase
 
         $this->context = new Context();
 
-        $this->routeNameProvider = new DummyRouteNameProvider();
+        $this->routeNameProvider = new RouteNameProvider();
         $this->routeNameProvider->setCurrentRouteName('index');
 
         $this->twig = new Environment($loader);
@@ -108,7 +108,7 @@ class TugSeoExtensionTest extends TestCase
 
         $this->assertEquals('<!-- start --><!-- end -->', $this->twig->render('index'));
 
-        $this->field->set(new DummyField());
+        $this->field->set(new Field());
 
         $this->assertEquals('<!-- start --><meta name="test1" content="zuzu # param1=pval1" />' .
             '<meta property="test2" content="a # option1=oval1" /><!-- end -->',

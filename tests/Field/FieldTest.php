@@ -6,13 +6,13 @@ use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Field\FieldData;
 use Tug\SeoBundle\Model\Meta;
 
-use Tug\SeoBundle\Tests\Stub\DummyField;
+use Tug\SeoBundle\Tests\Stub\Field;
 
 class FieldTest extends TestCase
 {
     public function testFieldInterface(): void
     {
-        $field = new DummyField();
+        $field = new Field();
 
         $this->assertEquals(['dummy', 'field'], $field->getNamespace());
 

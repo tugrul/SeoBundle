@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class DummyTranslatorService implements TranslatorInterface
+class TranslatorService implements TranslatorInterface
 {
     /**
      * @inheritDoc

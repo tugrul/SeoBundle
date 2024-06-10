@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 
 use Tug\SeoBundle\Model\ModelInterface;
 
-class DummyModel implements ModelInterface
+class Model implements ModelInterface
 {
     protected string $something;
 
@@ -23,9 +23,9 @@ class DummyModel implements ModelInterface
 
     /**
      * @param string $something
-     * @return DummyModel
+     * @return Model
      */
-    public function setSomething(string $something): DummyModel
+    public function setSomething(string $something): Model
     {
         $this->something = $something;
         return $this;

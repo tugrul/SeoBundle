@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 
 use Tug\SeoBundle\Field\{FieldData, FieldInterface};
 
-class DummyRegistryField implements FieldInterface
+class RegistryField implements FieldInterface
 {
     protected array $namespace;
 

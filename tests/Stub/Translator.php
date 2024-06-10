@@ -4,7 +4,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 
 use Tug\SeoBundle\Translate\{TranslationType, TranslatorInterface};
 
-class DummyTranslator implements TranslatorInterface
+class Translator implements TranslatorInterface
 {
     protected TranslationType $type;
 

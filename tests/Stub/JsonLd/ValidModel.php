@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Stub\JsonLd;
 use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('ValidKind', 'https://example.org')]
-class DummyValidModel
+class ValidModel
 {
     #[JsonLd\Property('@id')]
     public string $id = 'https://example.org#valid';

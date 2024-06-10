@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Stub\JsonLd;
 use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('Test')]
-class DummyCollectionModel
+class CollectionModel
 {
     #[JsonLd\Property('zo', filters: ['append_str' => ['suffix' => 'a']])]
     public \ArrayIterator $field1;

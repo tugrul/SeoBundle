@@ -6,7 +6,7 @@ use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 
 #[JsonLd\Type('abc')]
 #[JsonLd\Type('def')]
-class DummyMultiTypeFieldModel
+class MultiTypeFieldModel
 {
     #[JsonLd\Property('aaa')]
     #[JsonLd\Property('bbb', owners: 'abc')]

@@ -8,7 +8,7 @@ use Tug\SeoBundle\JsonLd\Attribute as JsonLd;
 #[JsonLd\Property('mokoko', filters: ['pick_value' => ['*value' => 'field1']])]
 #[JsonLd\Property('chain', filters: ['pick_params' => ['*f1' => 'field1', '*f2' => 'field3'], 'array_flip'])]
 #[JsonLd\Property('skipNull', filters: ['pick_value' => ['*value' => 'field1'], 'test', 'array_flip'])]
-class DummyFilterModel
+class FilterModel
 {
     public string $field1 = 'abc';
 

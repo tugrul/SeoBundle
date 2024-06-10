@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 use Tug\SeoBundle\Field\{FieldData, FieldInterface};
 use Tug\SeoBundle\Model\Meta;
 
-class DummyField implements FieldInterface
+class Field implements FieldInterface
 {
     public function getNamespace(): array
     {

@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Stub;
 use Tug\SeoBundle\Model\ModelInterface;
 use Tug\SeoBundle\Renderer\RendererInterface;
 
-class DummyFaultyRenderer implements RendererInterface
+class FaultyRenderer implements RendererInterface
 {
     protected string $model;
 

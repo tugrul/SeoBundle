@@ -5,13 +5,13 @@ namespace Tug\SeoBundle\Tests;
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Model\{Title as TitleModel, Link as LinkModel, Meta as MetaModel, Script as ScriptModel};
 use Tug\SeoBundle\Renderer\{Link, Meta, Script, Title};
-use Tug\SeoBundle\Tests\Stub\DummyRenderer;
+use Tug\SeoBundle\Tests\Stub\Renderer;
 
 class RendererTest extends TestCase
 {
     public function testRendererInterface(): void
     {
-        $renderer = new DummyRenderer();
+        $renderer = new Renderer();
 
         $model = new TitleModel();
         $model->setValue('blabla123');

@@ -5,7 +5,7 @@ namespace Tug\SeoBundle\Tests\Registry;
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Field\FieldInterface;
 use Tug\SeoBundle\Registry\Field;
-use Tug\SeoBundle\Tests\Stub\DummyRegistryField;
+use Tug\SeoBundle\Tests\Stub\RegistryField;
 
 class FieldTest extends TestCase
 {
@@ -13,7 +13,7 @@ class FieldTest extends TestCase
     {
         $registry = new Field();
 
-        $registry->set(new DummyRegistryField(['og', 'title']));
+        $registry->set(new RegistryField(['og', 'title']));
 
         $field = $registry->get(['og', 'title']);
 
@@ -38,7 +38,7 @@ class FieldTest extends TestCase
         ];
 
         foreach ($target as $namespace) {
-            $registry->set(new DummyRegistryField($namespace));
+            $registry->set(new RegistryField($namespace));
         }
 
         $fields = $registry->getAll();
