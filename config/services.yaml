@@ -71,6 +71,9 @@ services:
       $jsonLdRegistry: '@Tug\SeoBundle\Registry\JsonLdInterface'
     tags: ['serializer.normalizer']
 
+  Tug\SeoBundle\Serializer\Normalizer\JsonLdStringNormalizer:
+    tags: ['serializer.normalizer']
+
   # ~ serializer
 
   # twig
