@@ -32,6 +32,6 @@ class JsonLdStringNormalizer implements NormalizerInterface
 
     public function getSupportedTypes(?string $format): array
     {
-        return [ 'object' => null, '*' => false ];
+        return [ '*' => null, 'native-string' => false  ];
     }
 }
