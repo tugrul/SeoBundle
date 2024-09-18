@@ -119,11 +119,6 @@ class JsonLdArrayNormalizer implements NormalizerInterface, NormalizerAwareInter
                 continue;
             }
 
-            if (is_scalar($value)) {
-                $result[$key] = $value;
-                continue;
-            }
-
             $result[$key] = $this->normalizer->normalize($value, $format, $context);
         }
 
