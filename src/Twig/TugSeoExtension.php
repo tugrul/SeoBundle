@@ -2,9 +2,11 @@
 
 namespace Tug\SeoBundle\Twig;
 
-use Tug\SeoBundle\Registry\{ContextInterface, FieldInterface, RendererInterface};
+use Tug\SeoBundle\Registry\{ContextInterface, ContentInterface, FieldInterface, RendererInterface};
+use Tug\SeoBundle\Provider\ContentIndexProviderInterface;
+use Tug\SeoBundle\Translate\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\{TwigFunction, TwigFilter};
 
 use Tug\SeoBundle\Provider\RouteNameProviderInterface;
 
@@ -14,20 +16,33 @@ class TugSeoExtension extends AbstractExtension
 
     protected ContextInterface $context;
 
+    protected ContentInterface $content;
+
     protected RendererInterface $renderer;
 
     protected RouteNameProviderInterface $routeNameProvider;
 
-    public function __construct(FieldInterface $field, ContextInterface $context,
-                                RendererInterface $renderer, RouteNameProviderInterface $routeNameProvider)
+    protected TranslatorInterface $translator;
+
+    protected ContentIndexProviderInterface $contentIndexProvider;
+
+    public function __construct(FieldInterface $field, ContextInterface $context, ContentInterface $content,
+                                RendererInterface $renderer, RouteNameProviderInterface $routeNameProvider,
+                                TranslatorInterface $translator, ContentIndexProviderInterface $contentIndexProvider)
     {
         $this->field = $field;
 
         $this->context = $context;
 
+        $this->content = $content;
+
         $this->renderer = $renderer;
 
         $this->routeNameProvider = $routeNameProvider;
+
+        $this->translator = $translator;
+
+        $this->contentIndexProvider = $contentIndexProvider;
     }
 
     public function getFunctions(): array
@@ -35,6 +50,13 @@ class TugSeoExtension extends AbstractExtension
         return [
             new TwigFunction('tug_seo', [$this, 'getRenderedFields'], ['is_safe' => ['html']]),
             new TwigFunction('tug_seo_is_route_active', [$this, 'isRouteActive'])
+        ];
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('tug_seo_content', [$this, 'getContent'], ['is_safe' => ['html']])
         ];
     }
 
@@ -91,4 +113,49 @@ class TugSeoExtension extends AbstractExtension
 
         return false;
     }
+
+    public function getContent(string $blockName, int $seed, array $params = []): string
+    {
+        $routeName = $this->routeNameProvider->getCurrentRouteName();
+
+        if (empty($routeName) || str_starts_with($routeName, '_')) {
+            return '';
+        }
+
+        $content = $this->content->getContent($blockName);
+
+        if (empty($content)) {
+            return '';
+        }
+
+        $params = array_merge($this->context->getFinalParameters($routeName, []),
+            array_filter($params, fn($item) => is_scalar($item)));
+
+        $this->contentIndexProvider->setSeed($seed);
+
+        return $this->composeContent($content, $params);
+    }
+
+    protected function composeContent($content, $params): string {
+        $result = [];
+
+        foreach ($content as $item) {
+            if (is_string($item)) {
+                $result[] = $this->translator->translate($content, $params);
+            } elseif (is_array($item)) {
+                $item = array_values($item);
+                $index = $this->contentIndexProvider->getIndex(count($item) - 1);
+                $item = $item[$index];
+
+                if (is_string($item)) {
+                    $result[] = $this->translator->translate($item, $params);
+                } elseif (is_array($item)) {
+                    $result[] = $this->composeContent($item, $params);
+                }
+            }
+        }
+
+        return implode(' ', $result);
+    }
 }
+

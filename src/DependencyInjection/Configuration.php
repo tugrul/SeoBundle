@@ -18,17 +18,34 @@ class Configuration implements ConfigurationInterface
                 ->append($this->getTranslationDefinition())
                 ->append($this->getOptionsDefinition())
                 ->append($this->getParametersDefinition())
+                ->append($this->getContentsDefinition())
                 ->variableNode('default')->end()
                 ->variableNode('routes')->end()
                 ->arrayNode('hierarchy')
                     ->normalizeKeys(false)
                     ->arrayPrototype()
-                    ->scalarPrototype()
+                    ->scalarPrototype()->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
 
         return $treeBuilder;
+    }
+
+    public function getContentsDefinition(): ArrayNodeDefinition
+    {
+        $treeBuilder = new ArrayNodeDefinition('contents');
+
+        return $treeBuilder
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+                ->ignoreExtraKeys(false)
+                ->beforeNormalization()
+                    ->ifTrue(function ($v) {
+                        return !is_array($v);
+                    })
+                    ->thenInvalid('Each content must be an array.')
+                ->end()
+            ->end();
     }
 
     public function getJsonLdDefinition(): ArrayNodeDefinition
@@ -66,7 +83,8 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new ArrayNodeDefinition('translation');
 
-        return $treeBuilder->addDefaultsIfNotSet()
+        return $treeBuilder
+            ->addDefaultsIfNotSet()
             ->children()
                 ->enumNode('type')
                     ->values(TranslationType::cases())
@@ -79,10 +97,9 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('format_template')
                     ->defaultValue(['{', '}'])
-                    ->scalarPrototype()
+                    ->scalarPrototype()->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
     }
 
     public function getOptionsDefinition(): ArrayNodeDefinition

@@ -13,6 +13,10 @@ services:
     class: Tug\SeoBundle\Registry\Context
     public: true
 
+  tug_seo.registry.content:
+    class: Tug\SeoBundle\Registry\Content
+    public: true
+
   tug_seo.registry.jsonld:
     class: Tug\SeoBundle\Registry\JsonLd
     public: true
@@ -27,17 +31,25 @@ services:
     arguments: [ '@request_stack' ]
     public: true
 
+  tug_seo.provider.content_index_mersenne_twister_provider:
+    class: Tug\SeoBundle\Provider\ContentIndexMersenneTwisterProvider
+    public: true
+
   Tug\SeoBundle\Registry\FieldInterface: '@tug_seo.registry.field'
 
   Tug\SeoBundle\Registry\RendererInterface: '@tug_seo.registry.renderer'
 
   Tug\SeoBundle\Registry\ContextInterface: '@tug_seo.registry.context'
 
+  Tug\SeoBundle\Registry\ContentInterface: '@tug_seo.registry.content'
+
   Tug\SeoBundle\Registry\JsonLdInterface: '@tug_seo.registry.jsonld'
 
   Tug\SeoBundle\Translate\TranslatorInterface: '@tug_seo.translator'
 
   Tug\SeoBundle\Provider\RouteNameProviderInterface: '@tug_seo.provider.route_name_provider'
+
+  Tug\SeoBundle\Provider\ContentIndexProviderInterface: '@tug_seo.provider.content_index_mersenne_twister_provider'
 
   # jsonld filters
 
@@ -82,8 +94,11 @@ services:
     arguments:
       $field: '@Tug\SeoBundle\Registry\FieldInterface'
       $context: '@Tug\SeoBundle\Registry\ContextInterface'
+      $content: '@Tug\SeoBundle\Registry\ContentInterface'
       $renderer: '@Tug\SeoBundle\Registry\RendererInterface'
       $routeNameProvider: '@Tug\SeoBundle\Provider\RouteNameProviderInterface'
+      $translator: '@Tug\SeoBundle\Translate\TranslatorInterface'
+      $contentIndexProvider: '@Tug\SeoBundle\Provider\ContentIndexProviderInterface'
     tags: ['twig.extension']
 
   # ~ twig

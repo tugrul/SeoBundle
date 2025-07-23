@@ -234,10 +234,6 @@ class Context implements ContextInterface
 
     public function getFinalParameters(string $routeName, array $namespace): array
     {
-        if (empty($namespace)) {
-            return [];
-        }
-
         $parameters = $this->getDefaultParameters();
         $routeParameters = $this->getRouteParameters();
 
@@ -247,7 +243,9 @@ class Context implements ContextInterface
 
         $parameters = array_replace_recursive($parameters, $this->getParameters());
 
-        $parameters = $this->expandNamespace($parameters, $namespace) ?? [];
+        if (!empty($namespace)) {
+            $parameters = $this->expandNamespace($parameters, $namespace) ?? [];
+        }
 
         $globalParameters = $this->getGlobalParameters();
 

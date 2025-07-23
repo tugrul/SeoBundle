@@ -4,11 +4,12 @@ namespace Tug\SeoBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
 use Tug\SeoBundle\Field\Basic\Description;
-use Tug\SeoBundle\Registry\{Context, Field as FieldRegistry, Renderer};
+use Tug\SeoBundle\Registry\{Content, Context, Field as FieldRegistry, Renderer};
 use Tug\SeoBundle\Renderer\{Link, Meta, Title};
 use Tug\SeoBundle\Tests\Stub\{Field, FieldTranslatorService, RouteNameProvider};
 use Tug\SeoBundle\Translate\{TranslationType, Translator};
 use Tug\SeoBundle\Field\Basic\Title as TitleField;
+use Tug\SeoBundle\Provider\ContentIndexMersenneTwisterProvider;
 use Tug\SeoBundle\Twig\TugSeoExtension;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
@@ -18,6 +19,8 @@ class TugSeoExtensionTest extends TestCase
     protected Environment $twig;
 
     protected Context $context;
+
+    protected Content $content;
 
     protected FieldRegistry $field;
 
@@ -55,13 +58,15 @@ class TugSeoExtensionTest extends TestCase
 
         $this->context = new Context();
 
+        $this->content = new Content();
+
         $this->routeNameProvider = new RouteNameProvider();
         $this->routeNameProvider->setCurrentRouteName('index');
 
         $this->twig = new Environment($loader);
 
-        $this->twig->addExtension(new TugSeoExtension($this->field, $this->context,
-            $renderer, $this->routeNameProvider));
+        $this->twig->addExtension(new TugSeoExtension($this->field, $this->context, $this->content,
+            $renderer, $this->routeNameProvider, $translator, new ContentIndexMersenneTwisterProvider()));
     }
 
     public function testEmptyContext(): void

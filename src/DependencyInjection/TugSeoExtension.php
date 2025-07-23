@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Tug\SeoBundle\Registry\ContextInterface;
+use Tug\SeoBundle\Registry\ContentInterface;
 use Tug\SeoBundle\Registry\JsonLdInterface;
 use Tug\SeoBundle\Translate\TranslatorInterface;
 use Exception;
@@ -42,6 +43,12 @@ class TugSeoExtension extends Extension
             $context->addMethodCall('setRouteOptions', [ $config['options']['routes'] ]);
 
             $context->addMethodCall('setHierarchy', [ $this->normalizeRouteHierarchy($config['hierarchy']) ]);
+        }
+
+        if ($container->has(ContentInterface::class)) {
+            $content = $container->findDefinition(ContentInterface::class);
+
+            $content->addMethodCall('setContents', [ $config['contents'] ]);
         }
 
         if ($container->has(TranslatorInterface::class)) {
