@@ -13,6 +13,11 @@ class Content implements ContentInterface
         return $this;
     }
 
+    public function getContents(): array
+    {
+        return $this->contents;
+    }
+
     public function getContent(string $blockName): ?array
     {
         return $this->contents[$blockName] ?? null;
