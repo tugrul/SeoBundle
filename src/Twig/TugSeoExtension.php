@@ -133,7 +133,11 @@ class TugSeoExtension extends AbstractExtension
 
         $this->contentIndexProvider->setSeed($seed);
 
-        return $this->composeContent($content, $params);
+        $content = $this->composeContent($content, $params);
+
+        $this->contentIndexProvider->reset();
+
+        return $content;
     }
 
     protected function composeContent($content, $params): string {

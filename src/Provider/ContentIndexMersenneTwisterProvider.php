@@ -13,4 +13,9 @@ class ContentIndexMersenneTwisterProvider implements ContentIndexProviderInterfa
     {
         return mt_rand(0, $range);
     }
+
+    public function reset(): void
+    {
+        mt_srand();
+    }
 }
