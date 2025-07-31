@@ -145,7 +145,7 @@ class TugSeoExtension extends AbstractExtension
 
         foreach ($content as $item) {
             if (is_string($item)) {
-                $result[] = $this->translator->translate($content, $params);
+                $result[] = $this->translator->translate($item, $params);
             } elseif (is_array($item)) {
                 $item = array_values($item);
                 $index = $this->contentIndexProvider->getIndex(count($item) - 1);
