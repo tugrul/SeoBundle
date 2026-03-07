@@ -2,7 +2,7 @@
 
 namespace Tug\SeoBundle\Tests\Field;
 
-use Tug\SeoBundle\Field\Basic\{AmpHtml, Canonical, Description, Keywords, Robots, Title};
+use Tug\SeoBundle\Field\Basic\{AmpHtml, Canonical, Description, Keywords, Next, Prev, Robots, Title};
 use Tug\SeoBundle\Field\FieldData;
 use Tug\SeoBundle\Model\{Link, Meta, Title as TitleModel};
 
@@ -52,6 +52,52 @@ class BasicFieldTest extends AbstractFieldTest
         $this->assertEquals('canonical', $link->getRel());
 
         $this->assertEquals($canonicalUrl, $link->getHref());
+    }
+
+    public function testPrev(): void
+    {
+        $field = new Prev();
+
+        $this->assertEquals(['prev'], $field->getNamespace());
+
+        $prevUrl = 'https://example.com/article/prev';
+
+        $fieldData = new FieldData();
+        $fieldData->setContent($prevUrl);
+
+        /**
+         * @type $link Link
+         */
+        [ $link ] = [ ...$field->buildModels($fieldData) ];
+
+        $this->assertInstanceOf(Link::class, $link);
+
+        $this->assertEquals('prev', $link->getRel());
+
+        $this->assertEquals($prevUrl, $link->getHref());
+    }
+
+    public function testNext(): void
+    {
+        $field = new Next();
+
+        $this->assertEquals(['next'], $field->getNamespace());
+
+        $nextUrl = 'https://example.com/article/next';
+
+        $fieldData = new FieldData();
+        $fieldData->setContent($nextUrl);
+
+        /**
+         * @type $link Link
+         */
+        [ $link ] = [ ...$field->buildModels($fieldData) ];
+
+        $this->assertInstanceOf(Link::class, $link);
+
+        $this->assertEquals('next', $link->getRel());
+
+        $this->assertEquals($nextUrl, $link->getHref());
     }
 
     public function testDescription(): void

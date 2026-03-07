@@ -136,6 +136,12 @@ services:
   Tug\SeoBundle\Field\Basic\Canonical:
     tags: [ 'tug_seo.field' ]
 
+  Tug\SeoBundle\Field\Basic\Prev:
+    tags: [ 'tug_seo.field' ]
+
+  Tug\SeoBundle\Field\Basic\Next:
+    tags: [ 'tug_seo.field' ]
+
   Tug\SeoBundle\Field\Basic\AmpHtml:
     tags: [ 'tug_seo.field' ]
 
