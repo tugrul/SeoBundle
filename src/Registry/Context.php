@@ -193,9 +193,17 @@ class Context implements ContextInterface
         return $this->hierarchy;
     }
 
-    public function getParentRouteName(string $routeName): ?string
+    public function getParentRouteName(string $routeName, ?array $namespace = null): ?string
     {
-        return $this->hierarchy[$routeName] ?? null;
+        $parentRouteName = $this->hierarchy[$routeName] ?? null;
+
+        if (($parentRouteName !== null) && ($namespace !== null)
+            && ($this->expandNamespace($this->routeFields[$parentRouteName] ?? [], $namespace) === null)) {
+            // skip current route if namespace not available
+            $parentRouteName = $this->getParentRouteName($parentRouteName, $namespace);
+        }
+
+        return $parentRouteName;
     }
 
     protected function expandNamespace(array $values, array $namespace): mixed
@@ -278,7 +286,7 @@ class Context implements ContextInterface
             return null;
         }
 
-        $parentRouteName = $this->getParentRouteName($routeName);
+        $parentRouteName = $this->getParentRouteName($routeName, $namespace);
 
         $fieldData = new FieldData();
 
